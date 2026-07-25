@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'python3 ubuntu kubectl docker' }   // <-- match this to the label set on your agent node
+    agent any  // <-- match this to the label set on your agent node
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds-python-project')   // Jenkins credential ID (username + password/token)
@@ -80,3 +80,4 @@ pipeline {
         }
     }
 }
+
