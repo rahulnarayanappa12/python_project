@@ -1,5 +1,5 @@
 pipeline {
-    agent label-1  // <-- match this to the label set on your agent node
+    agent { label 'label-1' }  // <-- match this to the label set on your agent node
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds-python-project')   // Jenkins credential ID (username + password/token)
