@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: my-deployment
+spec:
+   replicas: 3
+   selector:
+     matchLabels:
+       app: my-app
+   template:
+      metadata:
+        labels:
+          app: my-app
+        annotations:
+           ad.datadoghq.com/my-app.checks: |
+             {
+               "openmetrics": {
+                 "init_config": {},
+                 "instances": [
+                   {
+                     "openmetrics_endpoint": "http://%%host%%:8080/metrics",
+                     "namespace": "flaskapp",
+                     "metrics": [".*"]
+                   }
+                 ]
+               }
+             }
+        
+           ad.datadoghq.com/my-app.logs: '[{"source":"python","service":"flask-app"}]'
+      spec: 
+         containers:
+             - name: my-app
+               image: rahulnarayanappa/k8s:v4
+               ports:
+                 - containerPort: 8080
+
+
+
