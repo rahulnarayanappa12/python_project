@@ -77,7 +77,9 @@ pipeline {
             echo "Pipeline failed. Check logs above."
         }
         always {
+			node('label-1') {
             sh 'docker system prune -f || true'
+        }
         }
     }
 }
