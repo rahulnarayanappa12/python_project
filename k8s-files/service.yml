@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+   name: my-app-svc
+spec:
+   type: ClusterIP
+   selector: 
+       app: my-app # matches with pod label
+   ports:
+     - name: http
+       port: 8085
+       targetPort: 8080
