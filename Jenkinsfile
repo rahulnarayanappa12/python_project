@@ -60,9 +60,9 @@ pipeline {
 	stage('Deploy') {
  	   steps {
         	sh '''
-            sed -i "s|IMAGE_TAG|$BUILD_NUMBER|g" k8s/deployment.yaml
-            kubectl apply -f k8s/deployment.yaml
-            kubectl apply -f k8s/service.yaml
+            sed -i "s|IMAGE_TAG|$BUILD_NUMBER|g" k8s-files/deployment.yml
+            kubectl apply -f k8s-files/deployment.yml
+            kubectl apply -f k8s-files/service.yml
             kubectl rollout status deployment/my-app --timeout=120s
         '''
    	   }
