@@ -8,9 +8,9 @@ pipeline {
         IMAGE_TAG              = "${env.BUILD_NUMBER}"
         FULL_IMAGE             = "${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-        // K8S_NAMESPACE           = 'default'                        // change if deploying elsewhere
-        // HELM_CHART_PATH          = 'helm-chart'                     // path to chart folder inside the repo
-        // HELM_RELEASE_NAME        = 'my-app'                          // helm release name
+        AWS_REGION   = 'ap-southeast-2'
+        CLUSTER_NAME = 'dev-cluster'
+        AWS_CREDS    = credentials('aws-eks-creds')
     }
 
     options {
@@ -47,25 +47,26 @@ pipeline {
             }
         }
 
-        /*
-        stage('Deploy to Kubernetes (Helm)') {
-            when {
-                expression { return params.RUN_DEPLOY }
-            }
+       stage('Configure kubeconfig') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG_CREDENTIALS')]) {
-                    sh '''
-                        export KUBECONFIG=$KUBECONFIG_CREDENTIALS
-                        helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
-                            --namespace ${K8S_NAMESPACE} \
-                            --set image.repository=${DOCKERHUB_NAMESPACE}/${IMAGE_NAME} \
-                            --set image.tag=${IMAGE_TAG} \
-                            --wait --timeout 120s
-                    '''
-                }
+                sh '''
+                    aws eks update-kubeconfig \
+                        --name $CLUSTER_NAME \
+                        --region $AWS_REGION
+                '''
             }
         }
-        */
+
+	stage('Deploy') {
+ 	   steps {
+        	sh '''
+            sed -i "s|IMAGE_TAG|$BUILD_NUMBER|g" k8s/deployment.yaml
+            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yaml
+            kubectl rollout status deployment/my-app --timeout=120s
+        '''
+   	   }
+	}
     }
 
     post {
