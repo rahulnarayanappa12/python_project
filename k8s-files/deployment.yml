@@ -30,7 +30,7 @@ spec:
       spec: 
          containers:
              - name: my-app
-               image: rahulnarayanappa/k8s:v4
+               image: rahulnarayanappa/k8s:IMAGE_TAG
                ports:
                  - containerPort: 8080
 
