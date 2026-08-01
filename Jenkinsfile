@@ -63,6 +63,7 @@ pipeline {
             sed -i "s|IMAGE_TAG|$BUILD_NUMBER|g" k8s-files/deployment.yml
             kubectl apply -f k8s-files/deployment.yml
             kubectl apply -f k8s-files/service.yml
+			kubectl apply -f k8s-files/ingress.yml
             kubectl rollout status deployment/my-deployment --timeout=120s
         '''
    	   }
